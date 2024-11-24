@@ -1,7 +1,6 @@
 #include "interface.h"
 #include "stdio.h"
 #include <SPI.h>
-#include "image.c"
 
 void drawImageBackground(TFT_eSPI& tft) {
   // Draw the image stored in program memory as the background
@@ -11,7 +10,9 @@ void drawImageBackground(TFT_eSPI& tft) {
       
       // Draw the pixel with the inverted color
       tft.drawPixel(x, y, color);
-      //tft.drawPixel(x, y, color);
+      //Try this funtion instead, may be less cpu intensive
+      //tft.pushImage(something something);
+      
     }
   }
 }

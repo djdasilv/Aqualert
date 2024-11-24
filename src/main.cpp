@@ -30,7 +30,7 @@ uint8_t level = 0;
 const char *level_strings[4] = {
         "Ankle",
         "Knee",
-        "Belly",
+        "Stomach",
         "Chest",
 };
 
@@ -42,6 +42,8 @@ void setup() {
   tft.setRotation(1);  // Set rotation to match your display orientation
 
   // Draw the background image
+  //Try this one instead.
+  //tft.pushImage(0,0,imageWidth,imageHeight,image);
   drawImageBackground(tft);
 }
 
