@@ -1,38 +1,64 @@
 
 #include <SD.h>
 #include <TFT_eSPI.h>
-
-#include <pgmspace.h>
 #include "interface.h"
+#include <pgmspace.h>
 
 #define PEOPLE_MODE 1
 #define VULNERABLE_MODE 2
 #define WATER_LEVEL 3
 
-uint8_t mode = 1 ;
 
 // TFT display object
 TFT_eSPI tft = TFT_eSPI();
 
-//Constants for the loop
-unsigned long lastToggleTime = 0; // Store last time the square toggled
-unsigned long toggleInterval = 100; // Interval for blinking in milliseconds
-int squareSize = 80; // Size of the square
-int squareX = 240;   // X position of the square (centered)
-int squareY = 0;  // Y position of the square (centered)
-bool squareVisible = true; // Flag to control visibility of the square
-const uint16_t BlueBackgroundColor= 0xDF5F;
+// Image dimensions (replace with your actual dimensions)
+const int imageWidth = 320;
+const int imageHeight = 240;
 
-//Data that was entered by the people
-uint8_t people = 1;
-uint8_t vulnerable =0;
-uint8_t level = 0;
-const char *level_strings[4] = {
-        "Ankle",
-        "Knee",
-        "Stomach",
-        "Chest",
-};
+void IRAM_ATTR handleUpButtonPress() {
+  static unsigned long last_interrupt_time = 0;
+  unsigned long interrupt_time = millis();
+  // If interrupts come faster than 200ms, assume it's a bounce and ignore
+  if (interrupt_time - last_interrupt_time > 200) {
+    switch (getMode()) {
+      case 1:
+        setPeople(getPeople()+1);
+        break;
+
+      case 2:
+        setVulnerable(getVulnerable()+1);
+        break;
+
+      case 3:
+        if (getLevel()>=WATER_LEVEL){
+          setLevel(0);
+          break; 
+        } else{
+          setLevel(getLevel()+1);
+          break;}
+    }
+    }
+  last_interrupt_time = interrupt_time;
+}
+
+void IRAM_ATTR handleOkButtonPress() {
+  static unsigned long last_interrupt_time = 0;
+  unsigned long interrupt_time = millis();
+  // If interrupts come faster than 200ms, assume it's a bounce and ignore
+  if (interrupt_time - last_interrupt_time > 200) {
+      clearOldRect(tft);
+      drawText(tft);
+      
+      if (getMode()<WATER_LEVEL) {
+        setMode(getMode()+1);
+      } else {
+        sendInfo();
+        setMode(4);
+      }
+  }
+  last_interrupt_time = interrupt_time;
+}
 
 
 void setup() {
@@ -40,73 +66,29 @@ void setup() {
   tft.begin();
   tft.fillScreen(TFT_WHITE); // Fill the screen with black at the start
   tft.setRotation(1);  // Set rotation to match your display orientation
+  //Configure button pins as inputs
+  pinMode(UP_BUTTON, INPUT);
+  //pinMode(DOWN_BUTTON, INPUT);// Problème car 21 pour la backlight
+  pinMode(OK_BUTTON, INPUT); 
+
+  // Attach interrupts to the button pins
+  attachInterrupt(digitalPinToInterrupt(UP_BUTTON), handleUpButtonPress, RISING);
+  //attachInterrupt(digitalPinToInterrupt(DOWN_BUTTON), handleDownButtonPress, FALLING);
+  attachInterrupt(digitalPinToInterrupt(OK_BUTTON), handleOkButtonPress, RISING);
 
   // Draw the background image
-  //Try this one instead.
-  //tft.pushImage(0,0,imageWidth,imageHeight,image);
-  drawImageBackground(tft);
+  tft.pushImage(0,0,imageWidth,imageHeight,image);
 }
 
 uint8_t mode_copy;
 void loop() {
- unsigned long currentTime = millis();  // Get the current time
-
-  // Check if it's time to toggle the visibility of the rectangle
-  if (currentTime - lastToggleTime >= toggleInterval) {
-    lastToggleTime = currentTime;  // Update the last toggle time
-
-    // If the rectangle is visible, remove it by drawing a filled rectangle with background color
-    if(mode == mode_copy){
-      if (squareVisible) {
-        tft.fillRect(squareX, squareY, squareSize, squareSize-2, ~BlueBackgroundColor); // Clear the old rectangle
-      } else {
-        // Draw the new blinking rectangle
-        tft.fillRect(squareX, squareY, squareSize, squareSize-2, ~TFT_RED); // Draw the border of the rectangle
-      }
-    } else {
-       tft.fillRect(squareX, squareY, squareSize, squareSize-2, ~BlueBackgroundColor); // Clear the old rectangle
-    }
-    
-
-    // Toggle the visibility of the rectangle for the next loop
-    squareVisible = !squareVisible;
+  if(getMode()<=3){
+    blinkingSquare(tft);
+    drawText(tft);
+  } else if (getMode()==4){
+      tft.pushImage(0,0,imageWidth,imageHeight,image2);
   }
-  
-  // Change the rectangle coordinates based on the current mode
-  switch (mode) {
-    case PEOPLE_MODE:
-      squareX = 240;
-      squareY = 0;
-      tft.setTextColor(TFT_WHITE);
-      tft.setTextSize(5);
-      tft.setCursor(squareX+20, squareY+20);  // Set text position
-      tft.print(people);  // Static text
-      break;
-    case VULNERABLE_MODE:
-      squareX = 240;
-      squareY = 80;
-      tft.setTextColor(TFT_WHITE);
-       tft.setTextSize(5);
-      tft.setCursor(squareX+20, squareY+20);  // Set text position
-      tft.print(vulnerable);  // Static text
-      break;
-    case WATER_LEVEL:
-      squareX = 240;
-      squareY = 160;
-      tft.setTextColor(TFT_WHITE);
-      tft.setTextSize(2);
-      tft.setCursor(squareX+5, squareY+40);  // Set text position
-      tft.print(level_strings[level]);  // Static text
-      break;
-  }
-
-  // Optionally, you can change the mode here based on some condition, e.g., button presses
-  // For demonstration, let's cycle through modes every 3 seconds
-    mode_copy = mode;
-  if (currentTime % 3000 < 100) {
-    mode = (mode == WATER_LEVEL) ? PEOPLE_MODE : mode + 1;  // Cycle through modes 1, 2, 3
-
-  }
+    usleep(500);
 }
 
 

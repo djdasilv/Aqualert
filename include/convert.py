@@ -18,14 +18,20 @@ def bmp_to_c_array(bmp_path, array_name="image"):
     width, height = img.size
 
     # Start the C array declaration
-    c_array = f"const uint16_t {array_name}[{width * height}] = {{\n"
+
+    c_array = """#include <stdio.h>\n#include <pgmspace.h>\n"""
+
+    c_array += f"const uint16_t {array_name}[{width * height}] PROGMEM = {{\n"
 
     # Loop over all pixels and convert them to RGB565
     pixel_data = []
     for y in range(height):
         for x in range(width):
             r, g, b = img.getpixel((x, y))
-            rgb565 = rgb888_to_rgb565(r, g, b)
+                                    ##b ,r,g 
+            rgb565 = rgb888_to_rgb565(0, 200, 0)
+            #rgb565_not = ~rgb565 & 0xFFFF # Apply bitwise NOT and mask to keep 16 bits
+            #pixel_data.append(f"0x{rgb565_not:04X}")  # Format as 4-digit hexadecimal
             pixel_data.append(f"0x{rgb565:04X}")
 
     # Join the pixel data and format the array in a C style
