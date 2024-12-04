@@ -8,6 +8,10 @@
 #define WATER_LEVEL 3
 #define HOLD_DURATION 5000
 
+//Timer pointer 
+hw_timer_t *DisplayTimer = NULL;
+uint32_t TimerCounter = 0;
+
 EasyButton UpButton(UP_BUTTON);
 EasyButton OkButton(OK_BUTTON);
 
@@ -59,7 +63,15 @@ void handleOkButtonPress() {
       }
 }
 
-void deepSleep(){}
+// Timer Interrupt Service Routine
+void DisplayOff() {
+  TimerCounter++;
+  if(TimerCounter > 600 ){
+    esp_sleep_enable_ext0_wakeup((gpio_num_t) UP_BUTTON,HIGH);
+    esp_sleep_enable_ext0_wakeup((gpio_num_t) OK_BUTTON,HIGH);
+    esp_deep_sleep_start();
+  }
+}
 
 void setup() {
   // Initialize TFT display
@@ -76,6 +88,11 @@ void setup() {
 
   UpButton.onPressed(handleUpButtonPress);
   OkButton.onPressed(handleOkButtonPress);
+
+  //Timer config for routine callback every secon
+  DisplayTimer = timerBegin(0, 80, true);  // Timer 0, prescaler 80 -> Clock @ 10MHz, count-up: true
+  timerAttachInterrupt(DisplayTimer, &DisplayOff, true);
+  timerAlarmWrite(DisplayTimer, 10000000, true); // 10,000,000 timer counts -> 1 seconds
 
   // Draw the background image
   tft.pushImage(0,0,imageWidth,imageHeight,image);
