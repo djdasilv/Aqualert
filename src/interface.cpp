@@ -2,6 +2,8 @@
 #include <SPI.h>
 #include "interface.h"
 
+#define MAX_PEOPLE 15
+
 //Modes 1= people, 2= vulnerable, 3= level
 uint8_t mode = 1 ;
 //Data that was entered by the people
@@ -90,13 +92,20 @@ uint8_t getVulnerable(){
 };
 
 void setPeople(uint8_t amount){
-  people = amount;
+  if ( amount > MAX_PEOPLE){
+    people= 0;
+  } else {
+    people = amount;
+  }
 }
 void setLevel(uint8_t amount){
   level = amount;
 };
 void setVulnerable(uint8_t amount){
-  vulnerable = amount;
+  if (amount > getPeople()){
+    vulnerable = 0;
+  } else {vulnerable = amount;
+  }
 }
 
 uint8_t getMode(){
