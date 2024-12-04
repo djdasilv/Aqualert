@@ -2,8 +2,6 @@
 #define HEADER_INTERFACE_H  // Define the macro
 
 #include <TFT_eSPI.h>
-#include "image.c"
-#include "image2.c"
 
 #define UP_BUTTON 35
 #define DOWN_BUTTON 21
