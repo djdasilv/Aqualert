@@ -5,21 +5,21 @@
 #define MAX_PEOPLE 15
 
 //Modes 1= people, 2= vulnerable, 3= level
-uint8_t mode = 1 ;
+uint8_t RTC_DATA_ATTR mode = 1 ;
 //Data that was entered by the people
-uint8_t people = 1;
-uint8_t vulnerable =0;
-uint8_t level = 0;
-const char *level_strings[4] = {
+uint8_t RTC_DATA_ATTR people = 1;
+uint8_t RTC_DATA_ATTR vulnerable =0;
+uint8_t RTC_DATA_ATTR level = 0;
+const char RTC_DATA_ATTR *level_strings[4] = {
         "Ankle",
         "Knee",
         "Stomach",
         "Chest",
 };
 
-int squareSize = 80; // Size of the square
-int squareX = 240;   // X position of the square (centered)
-int squareY = 0;  // Y position of the square (centered)
+int RTC_DATA_ATTR squareSize = 80; // Size of the square
+int RTC_DATA_ATTR squareX = 240;   // X position of the square (centered)
+int RTC_DATA_ATTR squareY = 0;  // Y position of the square (centered)
 
 //Constants for the interface
 unsigned long lastToggleTime = 0; // Store last time the square toggled
@@ -29,38 +29,38 @@ bool squareVisible = true; // Flag to control visibility of the square
 
 
 //Constants for the loop
-const uint16_t BlueBackgroundColor= 0xDF5F;
+const  uint16_t BlueBackgroundColor= 0xDF5F;
 
 
 void drawText(TFT_eSPI& tft ){
+      tft.setTextColor(TFT_WHITE);
+      tft.setTextSize(5);
+      tft.setCursor(260, 20);  // Set text position
+      tft.print(people);  // Static text
+      tft.setTextColor(TFT_WHITE);
+      tft.setTextSize(5);
+      tft.setCursor(260, 100);  // Set text position
+      tft.print(vulnerable);  // Static text
+      tft.setTextColor(TFT_WHITE);
+      tft.setTextSize(2);
+      tft.setCursor(245, 200);  // Set text position
+      tft.print(level_strings[level]);  // Static text
+};
+void blinkingSquare(TFT_eSPI& tft){
   switch (mode) {
     case 1:
       squareX = 240;
       squareY = 0;
-      tft.setTextColor(TFT_WHITE);
-      tft.setTextSize(5);
-      tft.setCursor(squareX+20, squareY+20);  // Set text position
-      tft.print(people);  // Static text
       break;
-    case 2:
+   case 2:
       squareX = 240;
       squareY = 80;
-      tft.setTextColor(TFT_WHITE);
-       tft.setTextSize(5);
-      tft.setCursor(squareX+20, squareY+20);  // Set text position
-      tft.print(vulnerable);  // Static text
       break;
-    case 3:
+   case 3:
       squareX = 240;
       squareY = 160;
-      tft.setTextColor(TFT_WHITE);
-      tft.setTextSize(2);
-      tft.setCursor(squareX+5, squareY+40);  // Set text position
-      tft.print(level_strings[level]);  // Static text
       break;
-  }
-};
-void blinkingSquare(TFT_eSPI& tft){
+    }
    unsigned long currentTime = millis();  // Get the current time
   // Check if it's time to toggle the visibility of the rectangle
   if (currentTime - lastToggleTime >= toggleInterval) {
@@ -113,8 +113,4 @@ uint8_t getMode(){
 }
 void setMode(uint8_t amount){
   mode= amount;
-}
-
-void sendInfo(){
-  
 }

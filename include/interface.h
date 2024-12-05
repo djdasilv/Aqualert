@@ -20,8 +20,6 @@ void setLevel(uint8_t amount);
 void setVulnerable(uint8_t amount);
 uint8_t getMode();
 void setMode(uint8_t amount);
-void sendInfo();
-
 #endif
 
 
