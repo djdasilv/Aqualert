@@ -3,9 +3,8 @@
 
 #include <TFT_eSPI.h>
 
-#define UP_BUTTON 35
-#define DOWN_BUTTON 21
-#define OK_BUTTON 22
+#define UP_BUTTON 27
+#define OK_BUTTON 26
 
 void drawText(TFT_eSPI& tft);
 void blinkingSquare(TFT_eSPI& tft);
@@ -18,6 +17,7 @@ void setLevel(uint8_t amount);
 void setVulnerable(uint8_t amount);
 uint8_t getMode();
 void setMode(uint8_t amount);
+void lora_begin();
 void sendInfo();
 
 #endif

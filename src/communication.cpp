@@ -3,15 +3,17 @@
 #include "communication.h"
 #include "LoRa.h"
 
+
 #define MAX_PEOPLE 15
+#define DEVICE_ID 285623
 
 //Modes 1= people, 2= vulnerable, 3= level
-uint8_t mode = 1 ;
+uint8_t RTC_DATA_ATTR mode = 1 ;
 //Data that was entered by the people
-uint8_t people = 1;
-uint8_t vulnerable =0;
-uint8_t level = 0;
-const char *level_strings[4] = {
+uint8_t RTC_DATA_ATTR people = 1;
+uint8_t RTC_DATA_ATTR vulnerable =0;
+uint8_t RTC_DATA_ATTR level = 0;
+const char RTC_DATA_ATTR *level_strings[4] = {
         "Ankle",
         "Knee",
         "Stomach",
@@ -52,10 +54,24 @@ void setMode(uint8_t amount){
   mode = amount;
 }
 
+void lora_begin(){
+  Serial.begin(115200);
+  while (!Serial);
+  Serial.println("LoRa Sender");
+  //setup LoRa transceiver module
+  LoRa.setPins(5, 14, 2); 
+  while (!LoRa.begin(868E6)) { //868E6 for Europe
+    Serial.println(".");
+    delay(500);
+  }
+  LoRa.setSpreadingFactor(12);
+  LoRa.setSyncWord(0xF3);
+  LoRa.setTxPower(20);
+  Serial.println("LoRa Initializing OK!");
+}
+
 void sendInfo(){
   LoRa.beginPacket();
-  char text[4];
-  snprintf( text, sizeof(text),"%d %d %d" ,getPeople(), getVulnerable(), getLevel()); 
-  LoRa.print(text);
+  LoRa.print("ID:"+ String(DEVICE_ID)+" "+String(getPeople())+String(getVulnerable())+String(getLevel()));
   LoRa.endPacket();
 }
