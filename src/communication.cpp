@@ -65,8 +65,12 @@ void lora_begin(){
     delay(500);
   }
   LoRa.setSpreadingFactor(12);
+  LoRa.setSignalBandwidth(125E3);
+  LoRa.setCodingRate4(8);
+  LoRa.enableCrc();
   LoRa.setSyncWord(0xF3);
-  LoRa.setTxPower(20);
+  LoRa.setTxPower(20,PA_OUTPUT_PA_BOOST_PIN);
+
   Serial.println("LoRa Initializing OK!");
 }
 

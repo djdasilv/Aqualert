@@ -15,7 +15,6 @@ Button2 OkButton;
 uint32_t timeButtonUp = 0 ;
 uint32_t timeButtonOk = 0 ;
 
-uint32_t timeLastAlert = 300;
 bool send=false;
 
 #define BUTTON_PIN_BITMASK(GPIO) (1ULL << GPIO)  // 2 ^ GPIO_NUMBER in hex
@@ -25,6 +24,7 @@ uint64_t bitmask =  BUTTON_PIN_BITMASK(WAKEUP_GPIO_27);
 
 //Callback function for when up button is pressed
 void handleUpButtonPress(Button2& b) {
+    if (b==OkButton);
     timeButtonUp = millis();
     switch (getMode()) {
       case PEOPLE_MODE:
@@ -50,6 +50,7 @@ void handleUpButtonPress(Button2& b) {
 
 //Callback function for when any button is pressed
 void onHoldAnyCallback(Button2& b){
+  if (b==OkButton);
   if (getMode()==4) {
     setMode(1);
   }
@@ -57,6 +58,7 @@ void onHoldAnyCallback(Button2& b){
 
 //Callback function for when ok button is pressed
 void handleOkButtonPress(Button2& b) {
+      if (b==OkButton);
       timeButtonOk = millis();
       if (getMode()<WATER_LEVEL) {
         setMode(getMode()+1);
@@ -70,7 +72,6 @@ void handleOkButtonPress(Button2& b) {
 }
 
 void setup() {
-
  //Configure button pins as inputs
   OkButton.begin(OK_BUTTON,INPUT_PULLDOWN,false);
   UpButton.begin(UP_BUTTON,INPUT_PULLDOWN,false);
@@ -104,6 +105,7 @@ void loop() {
     Serial.println("Going to sleep");
     esp_deep_sleep_start();
   }
+  
 }
 
 
