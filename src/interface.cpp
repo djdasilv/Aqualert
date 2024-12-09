@@ -17,7 +17,7 @@ const char RTC_DATA_ATTR *level_strings[4] = {
         "Chest",
 };
 
-int RTC_DATA_ATTR squareSize = 80; // Size of the square
+int RTC_DATA_ATTR squareSize = 55; // Size of the square
 int RTC_DATA_ATTR squareX = 240;   // X position of the square (centered)
 int RTC_DATA_ATTR squareY = 0;  // Y position of the square (centered)
 
@@ -35,30 +35,30 @@ const  uint16_t BlueBackgroundColor= 0xDF5F;
 void drawText(TFT_eSPI& tft ){
       tft.setTextColor(TFT_WHITE);
       tft.setTextSize(5);
-      tft.setCursor(260, 20);  // Set text position
+      tft.setCursor(140, 60);  // Set text position
       tft.print(people);  // Static text
       tft.setTextColor(TFT_WHITE);
       tft.setTextSize(5);
-      tft.setCursor(260, 100);  // Set text position
+      tft.setCursor(140, 165);  // Set text position
       tft.print(vulnerable);  // Static text
       tft.setTextColor(TFT_WHITE);
       tft.setTextSize(2);
-      tft.setCursor(245, 200);  // Set text position
+      tft.setCursor(120, 285);  // Set text position
       tft.print(level_strings[level]);  // Static text
 };
 void blinkingSquare(TFT_eSPI& tft){
   switch (mode) {
     case 1:
-      squareX = 240;
-      squareY = 0;
+      squareX = 100;
+      squareY = 50;
       break;
    case 2:
-      squareX = 240;
-      squareY = 80;
+      squareX = 100;
+      squareY = 155;
       break;
    case 3:
-      squareX = 240;
-      squareY = 160;
+      squareX = 100;
+      squareY = 265;
       break;
     }
    unsigned long currentTime = millis();  // Get the current time
@@ -69,10 +69,10 @@ void blinkingSquare(TFT_eSPI& tft){
     // If the rectangle is visible, remove it by drawing a filled rectangle with background color
     
     if (squareVisible) {
-      tft.fillRect(squareX, squareY, squareSize, squareSize-2, ~BlueBackgroundColor); // Clear the old rectangle
+      tft.fillRect(squareX, squareY, squareSize*2, squareSize-2, ~BlueBackgroundColor); // Clear the old rectangle
     } else {
       // Draw the new blinking rectangle
-      tft.fillRect(squareX, squareY, squareSize, squareSize-2, ~TFT_RED); // Draw the border of the rectangle
+      tft.fillRect(squareX, squareY, squareSize*2, squareSize-2, ~TFT_RED); // Draw the border of the rectangle
     }
   }
 }

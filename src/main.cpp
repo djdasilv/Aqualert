@@ -11,24 +11,24 @@
 #define HOLD_DURATION 5000
 
 #define BUTTON_PIN_BITMASK(GPIO) (1ULL << GPIO)  // 2 ^ GPIO_NUMBER in hex
-#define WAKEUP_GPIO_35              GPIO_NUM_35     // Only RTC IO are allowed - ESP32 Pin example
+#define WAKEUP_GPIO_27              GPIO_NUM_27     // Only RTC IO are allowed - ESP32 Pin example
 #define WAKEUP_GPIO_22              GPIO_NUM_22     // Only RTC IO are allowed - ESP32 Pin example
-uint64_t bitmask =BUTTON_PIN_BITMASK(WAKEUP_GPIO_35);
+uint64_t bitmask =BUTTON_PIN_BITMASK(WAKEUP_GPIO_27);//|BUTTON_PIN_BITMASK(WAKEUP_GPIO_22);
 
-bool send = false;
+RTC_DATA_ATTR bool send = false;
 
-Button2 UpButton;
-Button2 OkButton;
+RTC_DATA_ATTR Button2 UpButton;
+RTC_DATA_ATTR Button2 OkButton;
 
-uint32_t timeButtonUp = 0 ;
-uint32_t timeButtonOk = 0 ;
+RTC_DATA_ATTR uint32_t timeButtonUp = 0 ;
+RTC_DATA_ATTR uint32_t timeButtonOk = 0 ;
 
 // TFT display object
-TFT_eSPI tft = TFT_eSPI();
+RTC_DATA_ATTR TFT_eSPI tft = TFT_eSPI();
 
 // Image dimensions
-const int imageWidth = 320;
-const int imageHeight = 240;
+RTC_DATA_ATTR const int imageWidth = 240;
+RTC_DATA_ATTR const int imageHeight = 320;
 
 //Callback function for when up button is pressed
 void handleUpButtonPress(Button2& b) {
@@ -77,12 +77,12 @@ void setup() {
   // Initialize TFT display
   tft.begin();
   tft.fillScreen(TFT_WHITE); // Fill the screen with black at the start
-  tft.setRotation(1);  // Set rotation to match your display orientation
+  tft.setRotation(2);  // Set rotation to match your display orientation
 
   Serial.begin(115200);
   //Configure button pins as inputs
   OkButton.begin(OK_BUTTON,INPUT_PULLDOWN,false);
-  UpButton.begin(UP_BUTTON,INPUT_PULLDOWN,false);
+  //UpButton.begin(UP_BUTTON,INPUT_PULLDOWN,false);
   timeButtonUp = millis();
   timeButtonOk = millis();
 
@@ -113,6 +113,7 @@ void loop() {
   if (send and min(millis()-timeButtonOk,millis()-timeButtonUp)>INTERVAL ){
     send=false;
     Serial.println("Going to sleep");
+    Serial.println(OkButton.read());
     esp_deep_sleep_start();
   }
 }

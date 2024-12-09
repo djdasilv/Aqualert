@@ -5,8 +5,7 @@
 #include "image.c"
 #include "image2.c"
 
-#define UP_BUTTON 35
-#define DOWN_BUTTON 21
+#define UP_BUTTON 27
 #define OK_BUTTON 22
 
 void drawText(TFT_eSPI& tft);
