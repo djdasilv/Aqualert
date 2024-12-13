@@ -78,7 +78,7 @@ void blinkingSquare(TFT_eSPI& tft){
 }
 
 void clearOldRect(TFT_eSPI& tft){
-  tft.fillRect(squareX, squareY, squareSize, squareSize-2, ~BlueBackgroundColor); // Clear the old rectangle
+  tft.fillRect(squareX, squareY, squareSize*2, squareSize-2, ~BlueBackgroundColor); // Clear the old rectangle
 }
 
 uint8_t getPeople(){
