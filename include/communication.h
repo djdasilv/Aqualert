@@ -19,6 +19,7 @@ uint8_t getMode();
 void setMode(uint8_t amount);
 void lora_begin();
 void sendInfo();
+void sendReset();
 
 #endif
 

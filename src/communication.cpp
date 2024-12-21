@@ -5,7 +5,7 @@
 
 
 #define MAX_PEOPLE 15
-#define DEVICE_ID 285623
+#define DEVICE_ID 1
 
 //Modes 1= people, 2= vulnerable, 3= level
 uint8_t RTC_DATA_ATTR mode = 1 ;
@@ -76,7 +76,7 @@ void lora_begin(){
    // Change sync word (0xF3) to match the receiver
   // The sync word assures you don't get LoRa messages from other LoRa transceivers
   // ranges from 0-0xFF
-  LoRa.setSyncWord(0xF1);
+  LoRa.setSyncWord(0xEE);
   Serial.println("LoRa Initializing OK!");
 }
 
@@ -88,7 +88,7 @@ void sendInfo(){
   //Send LoRa packet to receiver
   LoRa.beginPacket();
   LoRa.print("ID "+ String(DEVICE_ID)+
-  " ; Loc [46.520402, 6.564847]"+
+  " ; Loc [46.521492676888904, 6.568858339178642]"+
   " ; Answer ["+ String(getPeople())+","+String(getVulnerable())+","+String(getLevel())+
   "] ; Counter:"+ counter); 
   LoRa.endPacket();

@@ -108,13 +108,13 @@ void setup() {
   esp_sleep_enable_ext1_wakeup(bitmask, ESP_EXT1_WAKEUP_ANY_HIGH);
 
   const uint64_t uS_TO_S_FACTOR = 1000000; // Conversion factor
-  const uint64_t SLEEP_TIME = 10;        // 5 minutes
+  const uint64_t SLEEP_TIME = 0;        // 5 minutes
   esp_sleep_enable_timer_wakeup(SLEEP_TIME * uS_TO_S_FACTOR);
   esp_sleep_enable_ext1_wakeup(bitmask, ESP_EXT1_WAKEUP_ANY_HIGH);
   if(getMode()==SEND_INFO) send=true;
 }
 
-#define INTERVAL 20000
+#define INTERVAL 5000
 void loop() {
   OkButton.loop();
   UpButton.loop();
@@ -131,6 +131,7 @@ void loop() {
   if (OkButton.isPressed() && UpButton.isPressed()){
     clearRTC();
     esp_restart();
+    sendReset();
   }
 }
 
